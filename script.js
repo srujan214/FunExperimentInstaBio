@@ -6,34 +6,26 @@ const bgmToggle = document.getElementById('bgm-toggle');
 const globalAudio = document.getElementById('global-audio');
 let isBgMusicPlaying = false;
 
-// Start BGM on first click (browser policy)
 document.addEventListener('click', function startBGM() {
     if (!isBgMusicPlaying && bgMusic) {
-        bgMusic.volume = 0.08; // Low background volume
+        bgMusic.volume = 0.08; 
         const playPromise = bgMusic.play();
         if (playPromise !== undefined) {
             playPromise.then(() => {
                 isBgMusicPlaying = true;
                 if(bgmToggle) bgmToggle.textContent = '🔊';
-            }).catch(e => {
-                console.warn("BGM blocked or missing:", e);
-                if(bgmToggle) bgmToggle.textContent = '🔇';
-            });
+            }).catch(e => console.warn("BGM blocked:", e));
         }
     }
     document.removeEventListener('click', startBGM);
 }, { once: true });
 
-// Background Music Toggle Button Logic
 if (bgmToggle) {
     bgmToggle.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent triggering the document click that starts BGM
+        e.stopPropagation(); 
         if (bgMusic.paused) {
             bgMusic.volume = 0.08;
-            bgMusic.play().then(() => {
-                isBgMusicPlaying = true;
-                bgmToggle.textContent = '🔊';
-            }).catch(e => console.warn("BGM missing", e));
+            bgMusic.play().then(() => { isBgMusicPlaying = true; bgmToggle.textContent = '🔊'; });
         } else {
             bgMusic.pause();
             isBgMusicPlaying = false;
@@ -43,7 +35,7 @@ if (bgmToggle) {
 }
 
 // ==========================================
-// 2. AUDIO MANAGER (BUG FIXED)
+// 2. AUDIO MANAGER
 // ==========================================
 class AudioManager {
     constructor() {
@@ -61,33 +53,24 @@ class AudioManager {
         });
     }
 
-    play(src, btnElement) {
+    play(src, btnElement = null) {
         try {
-            // If clicking the exact same button that is currently loaded
-            if (this.currentBtn === btnElement) {
-                if (this.audio.paused) {
-                    this.audio.play();
-                } else {
-                    this.audio.pause();
-                }
+            if (this.currentBtn === btnElement && btnElement !== null) {
+                if (this.audio.paused) this.audio.play();
+                else this.audio.pause();
                 return;
             }
 
-            // If a different button is clicked, stop the old one completely
-            if (this.currentBtn) {
-                this.reset();
-            }
+            if (this.currentBtn) this.reset();
 
             this.currentBtn = btnElement;
             this.audio.src = src; 
             
             const playPromise = this.audio.play();
             if (playPromise !== undefined) {
-                playPromise.catch(e => console.warn("Audio playback failed:", src, e));
+                playPromise.catch(e => console.warn("Audio missing:", src));
             }
-        } catch (error) {
-            console.error("Audio Manager Error:", error);
-        }
+        } catch (error) { console.error("Audio Error:", error); }
     }
 
     reset() {
@@ -100,29 +83,23 @@ class AudioManager {
 
     duckBGM(duck) {
         if (!bgMusic || bgMusic.paused) return;
-        if (duck) {
-            bgMusic.volume = 0.02; // Duck to almost silent
-        } else {
-            bgMusic.volume = 0.08; // Return to low
-        }
+        bgMusic.volume = duck ? 0.02 : 0.08;
     }
 
     updateIcon(playing) {
-        if (!this.currentBtn) return;
+        if (!this.currentBtn || !this.currentBtn.querySelector) return;
         const playIcon = this.currentBtn.querySelector('.icon-play');
         const pauseIcon = this.currentBtn.querySelector('.icon-pause');
-        if (playing) {
-            if(playIcon) playIcon.classList.add('hidden');
-            if(pauseIcon) pauseIcon.classList.remove('hidden');
-        } else {
-            if(playIcon) playIcon.classList.remove('hidden');
-            if(pauseIcon) pauseIcon.classList.add('hidden');
+        if (playIcon && pauseIcon) {
+            playIcon.classList.toggle('hidden', playing);
+            pauseIcon.classList.toggle('hidden', !playing);
         }
     }
 }
 window.audioManager = new AudioManager();
 
-document.querySelectorAll('.audio-btn').forEach(btn => {
+// General Audio Buttons
+document.querySelectorAll('.audio-btn, .audio-btn-small').forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation(); 
@@ -132,55 +109,29 @@ document.querySelectorAll('.audio-btn').forEach(btn => {
 });
 
 // ==========================================
-// 3. PHOTO CLICK AUDIO
-// ==========================================
-const profilePhoto = document.getElementById('profile-photo');
-if (profilePhoto) {
-    profilePhoto.style.cursor = 'pointer';
-    profilePhoto.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        window.audioManager.play('assets/audio/audio4.mp3', profilePhoto);
-    });
-}
-
-// ==========================================
-// 4. GENERIC FULL SCREEN VIDEO PLAYER
+// 3. VIDEO OVERLAY LOGIC
 // ==========================================
 const videoOverlay = document.getElementById('video-overlay');
 const fullscreenVideo = document.getElementById('fullscreen-video');
 const closeVideoBtn = document.getElementById('close-video-overlay');
-const videoErrorMsg = document.getElementById('video-error-msg');
-const videoHint = document.getElementById('video-hint');
 
-function playFullScreenVideo(src, errorMessage, hintText = "") {
+function playFullScreenVideo(src, showControls = true) {
     try {
+        if (!videoOverlay || !fullscreenVideo) return;
+        
         videoOverlay.classList.remove('hidden');
-        videoErrorMsg.classList.add('hidden');
-        fullscreenVideo.classList.remove('hidden');
-        videoHint.textContent = hintText;
-
         fullscreenVideo.src = src;
+        fullscreenVideo.controls = showControls;
         fullscreenVideo.currentTime = 0;
 
         if (bgMusic) bgMusic.volume = 0.02;
-        if (window.audioManager && window.audioManager.audio) window.audioManager.audio.pause();
+        if (window.audioManager) window.audioManager.audio.pause();
 
-        const playPromise = fullscreenVideo.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.warn("Video playback error:", error);
-                fullscreenVideo.classList.add('hidden');
-                videoErrorMsg.textContent = errorMessage;
-                videoErrorMsg.classList.remove('hidden');
-            });
-        }
-    } catch (e) {
-        console.error("Critical video error:", e);
-        fullscreenVideo.classList.add('hidden');
-        videoErrorMsg.textContent = "A critical error occurred while loading the video.";
-        videoErrorMsg.classList.remove('hidden');
-    }
+        fullscreenVideo.play().catch(e => {
+            console.warn("Video failed:", e);
+            videoOverlay.classList.add('hidden');
+        });
+    } catch (e) { console.error(e); }
 }
 
 if (closeVideoBtn) {
@@ -192,42 +143,55 @@ if (closeVideoBtn) {
 }
 
 // ==========================================
-// 5. TALENT & EXIT BUTTON LOGIC
+// 4. SPECIFIC TRIGGERS
 // ==========================================
-const talentBtn = document.getElementById('talent-btn');
-if (talentBtn) {
-    talentBtn.addEventListener('click', (e) => {
-        e.preventDefault(); 
-        playFullScreenVideo(
-            'assets/videos/video2.mp4', 
-            "Oops! My talent video is missing or failed to load.",
-            "Proof of my extraordinary talents."
-        );
+
+// 1. Profile Pic -> Video 6
+const profileTrigger = document.getElementById('profile-trigger');
+if (profileTrigger) {
+    profileTrigger.addEventListener('click', () => {
+        playFullScreenVideo('assets/videos/video6.mp4', true);
     });
 }
 
-let exitClicked = false;
-const exitBtn = document.getElementById('exit-btn');
-
-if (exitBtn) {
-    exitBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (!exitClicked) {
-            playFullScreenVideo(
-                'assets/videos/video1.mp4', 
-                "The exit video is missing. You are trapped here forever.",
-                "Click Exit in the menu again to confirm."
-            );
-            exitClicked = true;
-            exitBtn.textContent = "Confirm Exit";
-        } else {
-            window.location.href = 'goodbye.html';
+// 2. Anime Cards -> Audio Memes
+document.querySelectorAll('.anime-card').forEach(card => {
+    card.addEventListener('click', () => {
+        const audioSrc = card.getAttribute('data-audio');
+        if(audioSrc) {
+            window.audioManager.play(audioSrc, null); // null because cards don't have play icons
         }
     });
+});
+
+// 3. Contact Email -> Audio
+const emailTrigger = document.getElementById('email-trigger');
+if (emailTrigger) {
+    emailTrigger.addEventListener('click', () => {
+        window.audioManager.play('assets/audio/contact.mp3', null);
+    });
+}
+
+// 4. Goodbye Page (Secret Button & Farewell Audio)
+if (document.body.classList.contains('goodbye-body')) {
+    const playFarewellBtn = document.getElementById('play-farewell');
+    if(playFarewellBtn) {
+        playFarewellBtn.addEventListener('click', () => {
+            window.audioManager.play('assets/audio/goodbye.mp3', playFarewellBtn);
+        });
+    }
+
+    const secretBtn = document.getElementById('secret-btn');
+    if (secretBtn) {
+        secretBtn.addEventListener('click', () => {
+            // Play secret video with NO controls
+            playFullScreenVideo('assets/videos/video_secret.mp4', false);
+        });
+    }
 }
 
 // ==========================================
-// 6. SCROLL REVEAL & MOBILE MENU
+// 5. SCROLL REVEAL, MENU & SAKURA
 // ==========================================
 const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -246,6 +210,31 @@ if (mobileMenu) {
     mobileMenu.addEventListener('click', () => navLinks.classList.toggle('active'));
     document.querySelectorAll('.nav-links a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
 }
+
+function createSakura() {
+    const container = document.getElementById('sakura-container');
+    if (!container) return;
+    const isMobile = window.innerWidth < 768;
+    const petalCount = isMobile ? 12 : 25; 
+
+    for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement('div');
+        petal.classList.add('sakura-petal');
+        const size = Math.random() * 12 + 6;
+        petal.style.width = `${size}px`;
+        petal.style.height = `${size}px`;
+        petal.style.left = `${Math.random() * 100}vw`;
+        petal.style.animationDuration = `${Math.random() * 8 + 6}s`;
+        petal.style.animationDelay = `-${Math.random() * 10}s`;
+        petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+        petal.style.animationName = 'fall';
+        petal.style.animationTimingFunction = 'linear';
+        petal.style.animationIterationCount = 'infinite';
+        container.appendChild(petal);
+    }
+}
+
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) { createSakura(); }
 
 const revealPersonalityBtn = document.getElementById('reveal-personality-btn');
 if (revealPersonalityBtn) {
