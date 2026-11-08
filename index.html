@@ -7,34 +7,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    
+    <!-- LINK TO CSS FILE -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- AUDIO TAGS -->
     <audio id="bg-music" src="assets/audio/background-music.mp3" loop></audio>
+    <audio id="global-audio"></audio>
 
-    <nav id="navbar">
-        <div class="logo">夢 Srujan</div>
-        <button id="bgm-toggle" class="bgm-btn" title="Toggle Background Music">🔊</button>
-        
-        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#personality">Personality</a></li>
-            <li><a href="#contact">Contact</a></li>
-            
-            <!-- EXIT BUTTON WITH AUDIO -->
-            <li class="exit-nav-item">
-                <button class="audio-btn-small" data-audio="assets/audio/goodbye.mp3" title="Listen before you leave">
-                    <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                    <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                </button>
-                <a href="goodbye.html" class="exit-link">Exit</a>
-            </li>
-        </ul>
-    </nav>
-
+    <!-- OVERLAYS -->
+    <div class="bg-overlay"></div>
     <div id="sakura-container"></div>
 
     <!-- FULLSCREEN VIDEO OVERLAY -->
@@ -43,28 +27,50 @@
         <video id="fullscreen-video" class="fullscreen-video" playsinline></video>
     </div>
 
+    <!-- NAVIGATION -->
+    <nav id="navbar">
+        <div class="logo">夢 Srujan</div>
+        <div class="nav-controls">
+            <button id="bgm-toggle" class="bgm-btn" title="Toggle Background Music">🔊</button>
+            <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#personality">Personality</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="goodbye.html" class="exit-link">Exit</a></li>
+        </ul>
+    </nav>
+
     <!-- HERO SECTION -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <!-- PROFILE PIC TRIGGERS VIDEO 6 -->
-            <div class="hero-image-container reveal float-anim" id="profile-trigger">
-                <img src="assets/images/profile.jpg" alt="Srujan" class="hero-image" onerror="this.src='https://via.placeholder.com/400x500/1A1A1A/E8E0D5?text=Add+profile.jpg'">
-                <div class="image-overlay-glow"></div>
+            
+            <div class="hero-image-wrapper reveal" id="profile-trigger">
+                <div class="photo-frame">
+                    <img src="assets/images/profile.jpg" alt="Srujan" class="hero-image" onerror="this.src='https://via.placeholder.com/400x500/1A1A1A/E8E0D5?text=Add+profile.jpg'">
+                </div>
             </div>
             
-            <div class="hero-text reveal">
-                <h3 class="welcome-text">WELCOME TO MY WEB PAGE.</h3>
-                <h1 class="main-name shimmer-text">Srujan A Naik</h1>
-                <p class="subtitle">Welcome, stranger. You've somehow found your way into my little corner of the internet. Interesting decision.</p>
+            <div class="hero-text">
+                <div class="reveal">
+                    <h3 class="welcome-text">WELCOME TO MY WEB PAGE.</h3>
+                    <h1 class="main-name">Srujan A Naik</h1>
+                </div>
                 
-                <div class="cinematic-quote-box">
+                <p class="subtitle reveal delay-1">Welcome, stranger. You've somehow found your way into my little corner of the internet. Interesting decision.</p>
+                
+                <div class="cinematic-quote-box reveal delay-2">
                     <p class="quote-text">"Bhai ye dekh rahe ho ye kapde mahange hain andar se aadmi kaisa hoon main neech galeech pagal retarded khokhla shallow"</p>
-                    <button class="audio-btn" data-audio="assets/audio/introduction.mp3">
+                    <button class="audio-btn" data-audio="assets/audio/introduction.mp3" aria-label="Play quote">
                         <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                         <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        <span class="pulse-ring"></span>
                     </button>
                 </div>
             </div>
+            
         </div>
     </section>
 
@@ -73,52 +79,32 @@
         <div class="container">
             <h2 class="section-title reveal">About Me — A Beautiful Mistake</h2>
             
-            <!-- RUMORS HEADING -->
             <h3 class="sub-heading reveal">Rumors</h3>
-            <div class="about-header reveal">
-                <div class="poem-box center-poem">
-                    <p class="poem">"Sacchayi chhupayi gayi, afwah udayi gayi.<br>
-                    Baat kuch aur thi, batayi kuch aur gayi."</p>
-                    <button class="audio-btn" data-audio="assets/audio/about.mp3">
-                        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                        <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                    </button>
-                </div>
+            <div class="center-poem reveal">
+                <p class="poem">"Sacchayi chhupayi gayi, afwah udayi gayi.<br>Baat kuch aur thi, batayi kuch aur gayi."</p>
+                <button class="audio-btn" data-audio="assets/audio/about.mp3">
+                    <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
             </div>
 
-            <!-- ANIME HEADING & COLLECTION -->
-            <h3 class="sub-heading reveal mt-4">Anime</h3>
-            <div class="anime-collection reveal">
-                <div class="anime-grid">
-                    <!-- Each anime card triggers an audio meme -->
-                    <div class="anime-card" data-audio="assets/audio/anime1.mp3">
-                        <div class="anime-img-wrapper">
-                            <img src="assets/images/anime-aot.jpg" alt="Attack on Titan" loading="lazy">
-                            <div class="anime-hover-overlay"><span>🔊 Play Audio</span></div>
-                        </div>
-                        <h4>Attack on Titan</h4>
-                    </div>
-                    <div class="anime-card" data-audio="assets/audio/anime2.mp3">
-                        <div class="anime-img-wrapper">
-                            <img src="assets/images/anime-deathnote.jpg" alt="Death Note" loading="lazy">
-                            <div class="anime-hover-overlay"><span>🔊 Play Audio</span></div>
-                        </div>
-                        <h4>Death Note</h4>
-                    </div>
-                    <div class="anime-card" data-audio="assets/audio/anime3.mp3">
-                        <div class="anime-img-wrapper">
-                            <img src="assets/images/anime-vinland.jpg" alt="Vinland Saga" loading="lazy">
-                            <div class="anime-hover-overlay"><span>🔊 Play Audio</span></div>
-                        </div>
-                        <h4>Vinland Saga</h4>
-                    </div>
-                    <div class="anime-card" data-audio="assets/audio/anime4.mp3">
-                        <div class="anime-img-wrapper">
-                            <img src="assets/images/anime-yourname.jpg" alt="Your Name" loading="lazy">
-                            <div class="anime-hover-overlay"><span>🔊 Play Audio</span></div>
-                        </div>
-                        <h4>Your Name</h4>
-                    </div>
+            <h3 class="sub-heading reveal" style="margin-top: 4rem;">Anime</h3>
+            <div class="anime-grid reveal">
+                <div class="anime-card" data-audio="assets/audio/aot.mp3">
+                    <div class="anime-img-wrapper"><img src="assets/images/anime-aot.jpg" alt="AOT" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=AOT'"></div>
+                    <h4>Attack on Titan</h4>
+                </div>
+                <div class="anime-card" data-audio="assets/audio/deathnote.mp3">
+                    <div class="anime-img-wrapper"><img src="assets/images/anime-deathnote.jpg" alt="Death Note" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Death+Note'"></div>
+                    <h4>Death Note</h4>
+                </div>
+                <div class="anime-card" data-audio="assets/audio/vinland.mp3">
+                    <div class="anime-img-wrapper"><img src="assets/images/anime-vinland.jpg" alt="Vinland" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Vinland'"></div>
+                    <h4>Vinland Saga</h4>
+                </div>
+                <div class="anime-card" data-audio="assets/audio/yourname.mp3">
+                    <div class="anime-img-wrapper"><img src="assets/images/anime-yourname.jpg" alt="Your Name" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Your+Name'"></div>
+                    <h4>Your Name</h4>
                 </div>
             </div>
         </div>
@@ -127,35 +113,47 @@
     <!-- PERSONALITY SECTION -->
     <section id="personality" class="section">
         <div class="container text-center">
-            <h2 class="section-title reveal">Discover Your Opinion About Me</h2>
-            <div class="personality-card reveal">
-                <p id="personality-status" class="poem">Congratulations. You have officially wasted your curiosity.</p>
-                <button id="reveal-personality-btn" class="vintage-btn mt-2">Reveal My Personality</button>
-                <div id="custom-audio-player" class="audio-player hidden">
-                    <button class="audio-btn" data-audio="assets/audio/personality.mp3" id="personality-audio-btn">
+            <h2 class="section-title reveal">Personality</h2>
+            <p class="subtitle reveal">Some characters are difficult to understand. This one isn't an exception.</p>
+
+            <div class="personality-card reveal delay-1">
+                <div class="file-header">
+                    <span>CLASSIFIED FILE</span>
+                    <span>SUBJECT: SRUJAN</span>
+                </div>
+                
+                <p class="sarcastic-desc">"Congratulations. You are looking at a highly flawed prototype. Subject exhibits extreme levels of overthinking, a PhD in procrastination, and an unhealthy attachment to fictional anime characters."</p>
+
+                <div class="dossier-audio-player">
+                    <button class="audio-btn" data-audio="assets/audio/personality.mp3" id="personality-play-btn">
                         <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                         <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        <span class="pulse-ring"></span>
                     </button>
-                    <span class="audio-text">Listen to my highly questionable personality.</span>
+                    <div class="waveform-visualizer" id="waveform">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CONTACT SECTION (Audio triggers on Email click) -->
+    <!-- CONTACT SECTION -->
     <section id="contact" class="section dark-bg">
         <div class="container text-center reveal">
             <h2 class="section-title">Contact the Disaster</h2>
-            <p class="subtitle">Want to communicate with this questionable life form? Proceed at your own risk.</p>
-            <div class="social-links">
+            <p class="subtitle">Want to communicate? Proceed at your own risk.</p>
+            <div style="margin-top: 2rem;">
                 <a href="mailto:hello@example.com" id="email-trigger" class="social-icon">Email</a>
             </div>
         </div>
     </section>
 
-    <footer><p>&copy; 2024 Srujan. All rights reserved to nobody.</p></footer>
+    <footer style="text-align: center; padding: 2rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem;">
+        <p>&copy; 2024 Srujan. All rights reserved to nobody.</p>
+    </footer>
 
-    <audio id="global-audio"></audio>
+    <!-- LINK TO JAVASCRIPT FILE -->
     <script src="script.js"></script>
 </body>
 </html>

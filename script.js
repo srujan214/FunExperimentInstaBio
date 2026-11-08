@@ -1,247 +1,221 @@
-// ==========================================
-// 1. BACKGROUND MUSIC & DUCKING
-// ==========================================
-const bgMusic = document.getElementById('bg-music');
-const bgmToggle = document.getElementById('bgm-toggle');
-const globalAudio = document.getElementById('global-audio');
-let isBgMusicPlaying = false;
+document.addEventListener('DOMContentLoaded', () => {
+    // ==========================================
+    // 1. STRICT GLOBAL AUDIO MANAGER
+    // ==========================================
+    const bgMusic = document.getElementById('bg-music');
+    const bgmToggle = document.getElementById('bgm-toggle');
+    const globalAudio = document.getElementById('global-audio');
+    const waveform = document.getElementById('waveform');
+    
+    let isBgmPlaying = false;
+    let currentAudioBtn = null;
+    let wasBgmPlayingBeforeAudio = false;
 
-document.addEventListener('click', function startBGM() {
-    if (!isBgMusicPlaying && bgMusic) {
-        bgMusic.volume = 0.08; 
-        const playPromise = bgMusic.play();
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                isBgMusicPlaying = true;
-                if(bgmToggle) bgmToggle.textContent = '🔊';
-            }).catch(e => console.warn("BGM blocked:", e));
+    // Start BGM on first click anywhere
+    document.addEventListener('click', function startBgmOnce() {
+        if (!isBgmPlaying && bgMusic) {
+            bgMusic.volume = 0.05; // Low volume
+            bgMusic.play().then(() => {
+                isBgmPlaying = true;
+                bgmToggle.textContent = '🔊';
+            }).catch(e => console.log("BGM blocked"));
         }
-    }
-    document.removeEventListener('click', startBGM);
-}, { once: true });
+        document.removeEventListener('click', startBgmOnce);
+    }, { once: true });
 
-if (bgmToggle) {
-    bgmToggle.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        if (bgMusic.paused) {
-            bgMusic.volume = 0.08;
-            bgMusic.play().then(() => { isBgMusicPlaying = true; bgmToggle.textContent = '🔊'; });
-        } else {
+    // BGM Toggle Button
+    if (bgmToggle) {
+        bgmToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (bgMusic.paused) {
+                bgMusic.play();
+                bgmToggle.textContent = '🔊';
+                isBgmPlaying = true;
+            } else {
+                bgMusic.pause();
+                bgmToggle.textContent = '🔇';
+                isBgmPlaying = false;
+            }
+        });
+    }
+
+    // Function to handle any audio play
+    function playAudioTrack(src, btnElement) {
+        // 1. If same button clicked, toggle pause/play
+        if (currentAudioBtn === btnElement && btnElement !== null) {
+            if (globalAudio.paused) {
+                globalAudio.play();
+            } else {
+                globalAudio.pause();
+            }
+            return;
+        }
+
+        // 2. STOP BGM COMPLETELY
+        if (!bgMusic.paused) {
             bgMusic.pause();
-            isBgMusicPlaying = false;
-            bgmToggle.textContent = '🔇';
+            wasBgmPlayingBeforeAudio = true;
         }
-    });
-}
 
-// ==========================================
-// 2. AUDIO MANAGER
-// ==========================================
-class AudioManager {
-    constructor() {
-        this.audio = globalAudio;
-        this.currentBtn = null;
-
-        this.audio.addEventListener('ended', () => this.reset());
-        this.audio.addEventListener('pause', () => {
-            this.updateIcon(false);
-            this.duckBGM(false); 
-        });
-        this.audio.addEventListener('play', () => {
-            this.updateIcon(true);
-            this.duckBGM(true); 
-        });
-    }
-
-    play(src, btnElement = null) {
-        try {
-            if (this.currentBtn === btnElement && btnElement !== null) {
-                if (this.audio.paused) this.audio.play();
-                else this.audio.pause();
-                return;
+        // 3. Reset previous audio button UI
+        if (currentAudioBtn) {
+            const prevPlay = currentAudioBtn.querySelector('.icon-play');
+            const prevPause = currentAudioBtn.querySelector('.icon-pause');
+            if (prevPlay && prevPause) {
+                prevPlay.classList.remove('hidden');
+                prevPause.classList.add('hidden');
             }
+            currentAudioBtn.classList.remove('playing');
+        }
+        if (waveform) waveform.classList.remove('playing');
 
-            if (this.currentBtn) this.reset();
+        // 4. Play new audio
+        currentAudioBtn = btnElement;
+        globalAudio.src = src;
+        globalAudio.play().catch(e => console.warn("Audio missing:", src));
 
-            this.currentBtn = btnElement;
-            this.audio.src = src; 
+        // 5. Update UI
+        if (btnElement) {
+            const playIcon = btnElement.querySelector('.icon-play');
+            const pauseIcon = btnElement.querySelector('.icon-pause');
+            if (playIcon && pauseIcon) {
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            }
+            btnElement.classList.add('playing');
             
-            const playPromise = this.audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(e => console.warn("Audio missing:", src));
+            // Trigger waveform if it's the personality audio
+            if (src.includes('personality') && waveform) {
+                waveform.classList.add('playing');
             }
-        } catch (error) { console.error("Audio Error:", error); }
-    }
-
-    reset() {
-        this.audio.pause();
-        this.audio.currentTime = 0;
-        this.updateIcon(false);
-        this.duckBGM(false);
-        this.currentBtn = null;
-    }
-
-    duckBGM(duck) {
-        if (!bgMusic || bgMusic.paused) return;
-        bgMusic.volume = duck ? 0.02 : 0.08;
-    }
-
-    updateIcon(playing) {
-        if (!this.currentBtn || !this.currentBtn.querySelector) return;
-        const playIcon = this.currentBtn.querySelector('.icon-play');
-        const pauseIcon = this.currentBtn.querySelector('.icon-pause');
-        if (playIcon && pauseIcon) {
-            playIcon.classList.toggle('hidden', playing);
-            pauseIcon.classList.toggle('hidden', !playing);
         }
     }
-}
-window.audioManager = new AudioManager();
 
-// General Audio Buttons
-document.querySelectorAll('.audio-btn, .audio-btn-small').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation(); 
-        const src = btn.getAttribute('data-audio');
-        window.audioManager.play(src, btn);
+    // Attach Audio Buttons
+    document.querySelectorAll('.audio-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            playAudioTrack(btn.getAttribute('data-audio'), btn);
+        });
     });
-});
 
-// ==========================================
-// 3. VIDEO OVERLAY LOGIC
-// ==========================================
-const videoOverlay = document.getElementById('video-overlay');
-const fullscreenVideo = document.getElementById('fullscreen-video');
-const closeVideoBtn = document.getElementById('close-video-overlay');
+    // Attach Anime Cards
+    document.querySelectorAll('.anime-card').forEach(card => {
+        card.addEventListener('click', () => {
+            playAudioTrack(card.getAttribute('data-audio'), null);
+        });
+    });
 
-function playFullScreenVideo(src, showControls = true) {
-    try {
-        if (!videoOverlay || !fullscreenVideo) return;
+    // Attach Email Trigger
+    const emailBtn = document.getElementById('email-trigger');
+    if (emailBtn) {
+        emailBtn.addEventListener('click', () => {
+            playAudioTrack('assets/audio/contact.mp3', null);
+        });
+    }
+
+    // Resume BGM when audio ends or pauses
+    globalAudio.addEventListener('pause', () => {
+        if (currentAudioBtn) {
+            const playIcon = currentAudioBtn.querySelector('.icon-play');
+            const pauseIcon = currentAudioBtn.querySelector('.icon-pause');
+            if (playIcon && pauseIcon) {
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+            }
+            currentAudioBtn.classList.remove('playing');
+        }
+        if (waveform) waveform.classList.remove('playing');
         
-        videoOverlay.classList.remove('hidden');
-        fullscreenVideo.src = src;
-        fullscreenVideo.controls = showControls;
-        fullscreenVideo.currentTime = 0;
+        // Resume BGM
+        if (wasBgmPlayingBeforeAudio && bgMusic.paused) {
+            bgMusic.play();
+            wasBgmPlayingBeforeAudio = false;
+        }
+    });
 
-        if (bgMusic) bgMusic.volume = 0.02;
-        if (window.audioManager) window.audioManager.audio.pause();
+    // ==========================================
+    // 2. VIDEO OVERLAY (Strict Audio Cutoff)
+    // ==========================================
+    const profileTrigger = document.getElementById('profile-trigger');
+    const videoOverlay = document.getElementById('video-overlay');
+    const fullscreenVideo = document.getElementById('fullscreen-video');
+    const closeVideoBtn = document.getElementById('close-video-overlay');
 
-        fullscreenVideo.play().catch(e => {
-            console.warn("Video failed:", e);
+    if (profileTrigger) {
+        profileTrigger.addEventListener('click', () => {
+            // 1. Stop ALL audio
+            if (!bgMusic.paused) { bgMusic.pause(); wasBgmPlayingBeforeAudio = true; }
+            globalAudio.pause();
+            if(currentAudioBtn) currentAudioBtn.classList.remove('playing');
+            if(waveform) waveform.classList.remove('playing');
+
+            // 2. Play Video
+            videoOverlay.classList.remove('hidden');
+            fullscreenVideo.src = 'assets/videos/video6.mp4';
+            fullscreenVideo.controls = true;
+            fullscreenVideo.play().catch(e => console.warn("Video 6 missing"));
+        });
+    }
+
+    // When video pauses or ends, resume BGM
+    if (fullscreenVideo) {
+        fullscreenVideo.addEventListener('pause', () => {
+            if (wasBgmPlayingBeforeAudio && bgMusic.paused) {
+                bgMusic.play();
+                wasBgmPlayingBeforeAudio = false;
+            }
+        });
+        fullscreenVideo.addEventListener('ended', () => {
+            if (wasBgmPlayingBeforeAudio && bgMusic.paused) {
+                bgMusic.play();
+                wasBgmPlayingBeforeAudio = false;
+            }
+        });
+    }
+
+    if (closeVideoBtn) {
+        closeVideoBtn.addEventListener('click', () => {
             videoOverlay.classList.add('hidden');
+            fullscreenVideo.pause(); // Triggers the pause event above
         });
-    } catch (e) { console.error(e); }
-}
+    }
 
-if (closeVideoBtn) {
-    closeVideoBtn.addEventListener('click', () => {
-        videoOverlay.classList.add('hidden');
-        fullscreenVideo.pause();
-        if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.08; 
-    });
-}
+    // ==========================================
+    // 3. NAVIGATION, SCROLL REVEAL & SAKURA
+    // ==========================================
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
 
-// ==========================================
-// 4. SPECIFIC TRIGGERS
-// ==========================================
+    if (mobileMenu) {
+        mobileMenu.addEventListener('click', () => navLinks.classList.toggle('active'));
+        document.querySelectorAll('.nav-links a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
+    }
 
-// 1. Profile Pic -> Video 6
-const profileTrigger = document.getElementById('profile-trigger');
-if (profileTrigger) {
-    profileTrigger.addEventListener('click', () => {
-        playFullScreenVideo('assets/videos/video6.mp4', true);
-    });
-}
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// 2. Anime Cards -> Audio Memes
-document.querySelectorAll('.anime-card').forEach(card => {
-    card.addEventListener('click', () => {
-        const audioSrc = card.getAttribute('data-audio');
-        if(audioSrc) {
-            window.audioManager.play(audioSrc, null); // null because cards don't have play icons
+    const sakuraContainer = document.getElementById('sakura-container');
+    if (sakuraContainer && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const petalCount = window.innerWidth < 768 ? 15 : 30;
+        for (let i = 0; i < petalCount; i++) {
+            const petal = document.createElement('div');
+            petal.classList.add('sakura-petal');
+            const size = Math.random() * 10 + 8;
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size}px`;
+            petal.style.left = `${Math.random() * 100}vw`;
+            petal.style.animationDuration = `${Math.random() * 5 + 7}s`;
+            petal.style.animationDelay = `-${Math.random() * 10}s`;
+            sakuraContainer.appendChild(petal);
         }
-    });
+    }
 });
-
-// 3. Contact Email -> Audio
-const emailTrigger = document.getElementById('email-trigger');
-if (emailTrigger) {
-    emailTrigger.addEventListener('click', () => {
-        window.audioManager.play('assets/audio/contact.mp3', null);
-    });
-}
-
-// 4. Goodbye Page (Secret Button & Farewell Audio)
-if (document.body.classList.contains('goodbye-body')) {
-    const playFarewellBtn = document.getElementById('play-farewell');
-    if(playFarewellBtn) {
-        playFarewellBtn.addEventListener('click', () => {
-            window.audioManager.play('assets/audio/goodbye.mp3', playFarewellBtn);
-        });
-    }
-
-    const secretBtn = document.getElementById('secret-btn');
-    if (secretBtn) {
-        secretBtn.addEventListener('click', () => {
-            // Play secret video with NO controls
-            playFullScreenVideo('assets/videos/video_secret.mp4', false);
-        });
-    }
-}
-
-// ==========================================
-// 5. SCROLL REVEAL, MENU & SAKURA
-// ==========================================
-const revealObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-            observer.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-const mobileMenu = document.getElementById('mobile-menu');
-const navLinks = document.querySelector('.nav-links');
-if (mobileMenu) {
-    mobileMenu.addEventListener('click', () => navLinks.classList.toggle('active'));
-    document.querySelectorAll('.nav-links a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
-}
-
-function createSakura() {
-    const container = document.getElementById('sakura-container');
-    if (!container) return;
-    const isMobile = window.innerWidth < 768;
-    const petalCount = isMobile ? 12 : 25; 
-
-    for (let i = 0; i < petalCount; i++) {
-        const petal = document.createElement('div');
-        petal.classList.add('sakura-petal');
-        const size = Math.random() * 12 + 6;
-        petal.style.width = `${size}px`;
-        petal.style.height = `${size}px`;
-        petal.style.left = `${Math.random() * 100}vw`;
-        petal.style.animationDuration = `${Math.random() * 8 + 6}s`;
-        petal.style.animationDelay = `-${Math.random() * 10}s`;
-        petal.style.transform = `rotate(${Math.random() * 360}deg)`;
-        petal.style.animationName = 'fall';
-        petal.style.animationTimingFunction = 'linear';
-        petal.style.animationIterationCount = 'infinite';
-        container.appendChild(petal);
-    }
-}
-
-if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) { createSakura(); }
-
-const revealPersonalityBtn = document.getElementById('reveal-personality-btn');
-if (revealPersonalityBtn) {
-    revealPersonalityBtn.addEventListener('click', () => {
-        document.getElementById('personality-status').classList.add('hidden');
-        document.getElementById('custom-audio-player').classList.remove('hidden');
-        const audioBtn = document.getElementById('personality-audio-btn');
-        window.audioManager.play(audioBtn.getAttribute('data-audio'), audioBtn);
-    });
-}
