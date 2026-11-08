@@ -24,7 +24,9 @@
     <!-- FULLSCREEN VIDEO OVERLAY -->
     <div id="video-overlay" class="fullscreen-video-overlay hidden">
         <button id="close-video-overlay" class="close-overlay-btn">&times;</button>
-        <video id="fullscreen-video" class="fullscreen-video" playsinline></video>
+        <div id="video-loader" class="loader hidden"></div>
+        <div id="video-error" class="video-error-msg hidden">Failed to load video.</div>
+        <video id="fullscreen-video" class="fullscreen-video" playsinline preload="none"></video>
     </div>
 
     <!-- NAVIGATION -->
@@ -35,12 +37,18 @@
             <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
         </div>
         <ul class="nav-links">
-            <li><a href="#home" class="active">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#personality">Personality</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="goodbye.html" class="exit-link">Exit</a></li>
-        </ul>
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#personality">Personality</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="goodbye.html" class="exit-link">Exit</a></li>
+   <!-- TOP RIGHT GREETING BUTTON -->
+<li class="heart-nav-item">
+    <button class="audio-btn heart-style-btn" data-audio="assets/audio/greetings.mp3" title="Play Greeting">
+        <span class="heart-text">♥️</span>
+    </button>
+</li>
+</ul>
     </nav>
 
     <!-- HERO SECTION -->
@@ -91,19 +99,19 @@
             <h3 class="sub-heading reveal" style="margin-top: 4rem;">Anime</h3>
             <div class="anime-grid reveal">
                 <div class="anime-card" data-audio="assets/audio/aot.mp3">
-                    <div class="anime-img-wrapper"><img src="assets/images/anime-aot.jpg" alt="AOT" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=AOT'"></div>
+                    <div class="anime-img-wrapper"><img src="assets/images/anime-aot.jpg" alt="AOT" loading="lazy" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=AOT'"></div>
                     <h4>Attack on Titan</h4>
                 </div>
                 <div class="anime-card" data-audio="assets/audio/deathnote.mp3">
-                    <div class="anime-img-wrapper"><img src="assets/images/anime-deathnote.jpg" alt="Death Note" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Death+Note'"></div>
+                    <div class="anime-img-wrapper"><img src="assets/images/anime-deathnote.jpg" alt="Death Note" loading="lazy" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Death+Note'"></div>
                     <h4>Death Note</h4>
                 </div>
                 <div class="anime-card" data-audio="assets/audio/vinland.mp3">
-                    <div class="anime-img-wrapper"><img src="assets/images/anime-vinland.jpg" alt="Vinland" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Vinland'"></div>
+                    <div class="anime-img-wrapper"><img src="assets/images/anime-vinland.jpg" alt="Vinland" loading="lazy" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Vinland'"></div>
                     <h4>Vinland Saga</h4>
                 </div>
                 <div class="anime-card" data-audio="assets/audio/yourname.mp3">
-                    <div class="anime-img-wrapper"><img src="assets/images/anime-yourname.jpg" alt="Your Name" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Your+Name'"></div>
+                    <div class="anime-img-wrapper"><img src="assets/images/anime-yourname.jpg" alt="Your Name" loading="lazy" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Your+Name'"></div>
                     <h4>Your Name</h4>
                 </div>
             </div>
@@ -122,7 +130,8 @@
                     <span>SUBJECT: SRUJAN</span>
                 </div>
                 
-                    <p class="sarcastic-desc">"No clear motive. No predictable pattern. Just a series of events that somehow make sense to absolutely nobody."</p>
+                <p class="sarcastic-desc">"No clear motive. No predictable pattern. Just a series of events that somehow make sense to absolutely nobody."</p>
+
                 <div class="dossier-audio-player">
                     <button class="audio-btn" data-audio="assets/audio/personality.mp3" id="personality-play-btn">
                         <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -139,24 +148,25 @@
 
     <!-- CONTACT SECTION -->
     <section id="contact" class="section dark-bg">
-      <div class="container text-center reveal">
-    <h2 class="section-title">Contact the Disaster</h2>
-    <p class="subtitle">Want to communicate? Proceed at your own risk.</p>
-    <div style="margin-top: 2rem;">
-        <a href="mailto:hello@example.com" id="email-trigger" class="social-icon">Email</a>
-    </div>
-    
-    <!-- HIDDEN PREDICTOR BUTTON -->
-    <div class="predictor-container">
-        <button id="predictor-btn" class="hidden-predictor-btn" title="Click to reveal your true opinion of me.">
-            ✦ it will predict your personality ✦
-        </button>
-    </div>
-</div>
+        <div class="container text-center reveal">
+            <h2 class="section-title">Contact the Disaster</h2>
+            <p class="subtitle">Want to communicate? Proceed at your own risk.</p>
+            <div style="margin-top: 2rem;">
+                <a href="mailto:hello@example.com" id="email-trigger" class="social-icon">Email</a>
+            </div>
+            
+            <!-- HIDDEN PREDICTOR BUTTON -->
+            <div class="predictor-container">
+                <button id="predictor-btn" class="hidden-predictor-btn" title="Click to reveal your true opinion of me.">
+                                                 ✦ Sometime it predict your personality ✦
+                </button>
+            </div>
+        </div>
     </section>
 
-    <footer style="text-align: center; padding: 2rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem;">
-        <p>&copy; 2027 Srujan. All rights reserved to nobody.</p>
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 Srujan. All rights reserved to nobody.</p>
     </footer>
 
     <!-- LINK TO JAVASCRIPT FILE -->

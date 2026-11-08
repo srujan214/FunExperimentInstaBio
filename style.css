@@ -54,9 +54,9 @@ body {
    3. TYPOGRAPHY & NAVIGATION
    ========================================= */
 .welcome-text { font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 0.5rem; font-weight: 600; }
-.main-name { font-family: var(--font-handwritten); font-size: clamp(3.5rem, 8vw, 5.5rem); line-height: 1.1; text-shadow: 0 0 30px rgba(199, 161, 93, 0.3); margin-bottom: 1rem; }
-.subtitle { font-family: var(--font-serif); font-style: italic; color: var(--text-secondary); font-size: clamp(1rem, 2vw, 1.1rem); margin-bottom: 2rem; }
-.section-title { font-family: var(--font-handwritten); font-size: 3rem; color: var(--accent-gold); text-align: center; margin-bottom: 2rem; }
+.main-name { font-family: var(--font-handwritten); font-size: clamp(3rem, 8vw, 5.5rem); line-height: 1.1; text-shadow: 0 0 30px rgba(199, 161, 93, 0.3); margin-bottom: 1rem; }
+.subtitle { font-family: var(--font-serif); font-style: italic; color: var(--text-secondary); font-size: clamp(0.95rem, 2vw, 1.1rem); margin-bottom: 2rem; }
+.section-title { font-family: var(--font-handwritten); font-size: clamp(2.5rem, 6vw, 3rem); color: var(--accent-gold); text-align: center; margin-bottom: 2rem; }
 .sub-heading { font-family: var(--font-sans); font-size: 1.2rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 1.5rem; font-weight: 600; }
 
 nav {
@@ -68,7 +68,6 @@ nav {
 .logo { font-family: var(--font-handwritten); font-size: 1.8rem; text-shadow: 0 0 10px rgba(166, 43, 43, 0.5); }
 .nav-controls { display: flex; align-items: center; gap: 1rem; }
 
-/* Premium BGM Button */
 .bgm-btn {
     background: rgba(18, 18, 24, 0.8); border: 1px solid var(--accent-gold);
     color: var(--accent-gold); border-radius: 50%; width: 40px; height: 40px;
@@ -107,18 +106,19 @@ nav {
 .text-center { text-align: center; }
 
 .hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 5% 60px; position: relative; z-index: 10; }
-.hero-content { display: flex; flex-direction: column; gap: 3rem; max-width: 1100px; width: 100%; margin: 0 auto; align-items: center; }
+.hero-content { display: flex; flex-direction: column; gap: 2rem; max-width: 1100px; width: 100%; margin: 0 auto; align-items: center; }
 
-.hero-image-wrapper { width: 100%; max-width: 300px; perspective: 1000px; cursor: pointer; }
+/* PROFILE PIC MOBILE FIX */
+.hero-image-wrapper { width: 100%; max-width: 220px; perspective: 1000px; cursor: pointer; margin: 0 auto; }
 .photo-frame { position: relative; border-radius: 15px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 1px solid rgba(242, 235, 217, 0.1); transition: transform 0.4s; }
 .photo-frame:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(166, 43, 43, 0.2); }
-.hero-image { width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 4/5; filter: sepia(0.2) contrast(1.1); }
+.hero-image { width: 100%; height: auto; display: block; object-fit: cover; object-position: center top; aspect-ratio: 4/5; filter: sepia(0.2) contrast(1.1); }
 
 .hero-text { width: 100%; text-align: center; }
 
 @media (min-width: 900px) {
-    .hero-content { flex-direction: row; justify-content: space-between; text-align: left; }
-    .hero-image-wrapper { max-width: 400px; }
+    .hero-content { flex-direction: row; justify-content: space-between; text-align: left; gap: 4rem; }
+    .hero-image-wrapper { max-width: 380px; }
     .hero-text { text-align: left; }
 }
 
@@ -131,8 +131,8 @@ nav {
     border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column;
     align-items: center; gap: 1rem; margin-top: 1rem; box-shadow: 0 15px 40px rgba(0,0,0,0.5);
 }
-.quote-text { font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; line-height: 1.8; }
-@media (min-width: 900px) { .cinematic-quote-box { flex-direction: row; padding: 2rem; text-align: left; } }
+.quote-text { font-family: var(--font-serif); font-size: 1rem; font-style: italic; line-height: 1.8; }
+@media (min-width: 900px) { .cinematic-quote-box { flex-direction: row; padding: 2rem; text-align: left; } .quote-text { font-size: 1.1rem; } }
 
 .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1rem; }
 .anime-card { background: #1c1c1c; border-radius: 8px; overflow: hidden; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
@@ -140,7 +140,7 @@ nav {
 .anime-img-wrapper { width: 100%; aspect-ratio: 3/4; overflow: hidden; }
 .anime-img-wrapper img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%); transition: 0.3s; }
 .anime-card:hover img { filter: grayscale(0%); transform: scale(1.05); }
-.anime-card h4 { padding: 1rem; font-size: 0.9rem; color: var(--text-primary); }
+.anime-card h4 { padding: 1rem 0.5rem; font-size: 0.85rem; color: var(--text-primary); }
 @media (min-width: 768px) { .anime-grid { grid-template-columns: repeat(4, 1fr); } }
 
 .center-poem { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 2rem; background: rgba(10,10,15,0.6); border-bottom: 2px solid var(--accent-red); margin-bottom: 2rem; }
@@ -192,7 +192,7 @@ nav {
     border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;
 }
 .sarcastic-desc {
-    font-family: var(--font-serif); font-size: 1.1rem; line-height: 1.8;
+    font-family: var(--font-serif); font-size: 1rem; line-height: 1.8;
     color: var(--text-primary); font-style: italic; margin-bottom: 2rem; position: relative; z-index: 2;
 }
 .dossier-audio-player {
@@ -215,40 +215,106 @@ nav {
 .waveform-visualizer.playing span:nth-child(7) { animation-delay: 0.2s; }
 @keyframes wave { 0%, 100% { height: 20%; } 50% { height: 100%; } }
 
-/* Video Overlay */
-.fullscreen-video-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-.fullscreen-video { width: 100%; height: 100%; object-fit: contain; }
-.close-overlay-btn { position: absolute; top: 20px; right: 30px; font-size: 3rem; background: transparent; border: none; color: var(--accent-red); cursor: pointer; z-index: 10000; }
 /* =========================================
-   HIDDEN PREDICTOR BUTTON
+   8. FULLSCREEN VIDEO & LOADER
    ========================================= */
-.predictor-container {
-    margin-top: 3rem;
-    opacity: 0.3; /* Subtle by default */
-    transition: opacity 0.4s ease, transform 0.4s ease;
+.fullscreen-video-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.fullscreen-video { width: 100%; height: 100%; object-fit: contain; }
+.close-overlay-btn { position: absolute; top: 20px; right: 30px; font-size: 3rem; background: transparent; border: none; color: var(--accent-red); cursor: pointer; z-index: 10000; transition: 0.3s; }
+.close-overlay-btn:hover { color: white; transform: scale(1.1); }
+
+/* Spinner */
+.loader {
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid var(--accent-gold);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    z-index: 9998;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.video-error-msg {
+    position: absolute; color: var(--text-primary); background: rgba(166, 43, 43, 0.9);
+    padding: 1rem 2rem; border-radius: 5px; z-index: 9998; font-family: var(--font-serif);
 }
 
-.predictor-container:hover {
-    opacity: 1;
-    transform: scale(1.05);
-}
-
+/* =========================================
+   9. HIDDEN PREDICTOR BUTTON & FOOTER
+   ========================================= */
+.predictor-container { margin-top: 3rem; opacity: 0.3; transition: opacity 0.4s ease, transform 0.4s ease; }
+.predictor-container:hover { opacity: 1; transform: scale(1.05); }
 .hidden-predictor-btn {
-    background: transparent;
-    border: 1px dashed var(--accent-red);
-    color: var(--text-secondary);
-    font-family: monospace;
-    font-size: 0.8rem;
-    padding: 0.8rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 2px;
+    background: transparent; border: 1px dashed var(--accent-red); color: var(--text-secondary);
+    font-family: monospace; font-size: 0.8rem; padding: 0.8rem 1.5rem; border-radius: 4px;
+    cursor: pointer; transition: all 0.3s ease; letter-spacing: 2px;
+}
+.hidden-predictor-btn:hover { color: var(--text-primary); border-color: var(--accent-gold); background: rgba(166, 43, 43, 0.1); box-shadow: 0 0 15px rgba(166, 43, 43, 0.3); }
+
+footer { text-align: center; padding: 2rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; color: var(--text-secondary); }
+/* =========================================
+   TOP RIGHT HEART BUTTON
+   ========================================= */
+.heart-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
 }
 
-.hidden-predictor-btn:hover {
-    color: var(--text-primary);
-    border-color: var(--accent-gold);
+.heart-style-btn {
+    border: 1px solid var(--accent-red);
     background: rgba(166, 43, 43, 0.1);
-    box-shadow: 0 0 15px rgba(166, 43, 43, 0.3);
+    color: var(--accent-red);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heart-style-btn:hover {
+    background: var(--accent-red);
+    color: white;
+    box-shadow: 0 0 15px rgba(166, 43, 43, 0.5);
+}
+
+.heart-text {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    display: block;
+}
+
+/* When playing, hide the heart and show a pause symbol */
+.heart-style-btn.playing .heart-text {
+    display: none;
+}
+
+.heart-style-btn.playing::after {
+    content: '⏸';
+    font-size: 1.2rem;
+    color: white;
+}
+
+/* Animate the heart slightly on hover */
+.heart-style-btn:hover .heart-text {
+    transform: scale(1.2);
+}
+
+/* Mobile spacing adjustment */
+@media (max-width: 767px) {
+    .heart-nav-item {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+    .heart-style-btn {
+        width: 50px;
+        height: 50px;
+    }
+    .heart-text {
+        font-size: 1.5rem;
+    }
 }

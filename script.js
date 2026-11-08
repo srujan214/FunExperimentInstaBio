@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
             bgMusic.volume = 0.05; // Low volume
             bgMusic.play().then(() => {
                 isBgmPlaying = true;
-                bgmToggle.textContent = '🔊';
-            }).catch(e => console.log("BGM blocked"));
+                if (bgmToggle) bgmToggle.textContent = '🔊';
+            }).catch(e => console.log("BGM blocked by browser"));
         }
         document.removeEventListener('click', startBgmOnce);
     }, { once: true });
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bgmToggle.addEventListener('click', (e) => {
             e.stopPropagation();
             if (bgMusic.paused) {
-                bgMusic.play();
+                bgMusic.play().catch(e => console.log("BGM missing"));
                 bgmToggle.textContent = '🔊';
                 isBgmPlaying = true;
             } else {
@@ -39,55 +39,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to handle any audio play
+    // Central function for playing audio
     function playAudioTrack(src, btnElement) {
-        // 1. If same button clicked, toggle pause/play
-        if (currentAudioBtn === btnElement && btnElement !== null) {
-            if (globalAudio.paused) {
-                globalAudio.play();
-            } else {
-                globalAudio.pause();
+        try {
+            // 1. Toggle logic if same button clicked
+            if (currentAudioBtn === btnElement && btnElement !== null) {
+                if (globalAudio.paused) {
+                    globalAudio.play().catch(e => console.warn("Play prevented:", e));
+                } else {
+                    globalAudio.pause();
+                }
+                return;
             }
-            return;
-        }
 
-        // 2. STOP BGM COMPLETELY
-        if (!bgMusic.paused) {
-            bgMusic.pause();
-            wasBgmPlayingBeforeAudio = true;
-        }
-
-        // 3. Reset previous audio button UI
-        if (currentAudioBtn) {
-            const prevPlay = currentAudioBtn.querySelector('.icon-play');
-            const prevPause = currentAudioBtn.querySelector('.icon-pause');
-            if (prevPlay && prevPause) {
-                prevPlay.classList.remove('hidden');
-                prevPause.classList.add('hidden');
+            // 2. Stop BGM completely
+            if (!bgMusic.paused) {
+                bgMusic.pause();
+                wasBgmPlayingBeforeAudio = true;
             }
-            currentAudioBtn.classList.remove('playing');
-        }
-        if (waveform) waveform.classList.remove('playing');
 
-        // 4. Play new audio
-        currentAudioBtn = btnElement;
-        globalAudio.src = src;
-        globalAudio.play().catch(e => console.warn("Audio missing:", src));
-
-        // 5. Update UI
-        if (btnElement) {
-            const playIcon = btnElement.querySelector('.icon-play');
-            const pauseIcon = btnElement.querySelector('.icon-pause');
-            if (playIcon && pauseIcon) {
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
+            // 3. Reset previous button UI
+            if (currentAudioBtn) {
+                const prevPlay = currentAudioBtn.querySelector('.icon-play');
+                const prevPause = currentAudioBtn.querySelector('.icon-pause');
+                if (prevPlay && prevPause) {
+                    prevPlay.classList.remove('hidden');
+                    prevPause.classList.add('hidden');
+                }
+                currentAudioBtn.classList.remove('playing');
             }
-            btnElement.classList.add('playing');
+            if (waveform) waveform.classList.remove('playing');
+
+            // 4. Play new audio
+            currentAudioBtn = btnElement;
+            globalAudio.src = src;
             
-            // Trigger waveform if it's the personality audio
-            if (src.includes('personality') && waveform) {
-                waveform.classList.add('playing');
+            const playPromise = globalAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => {
+                    console.warn("Audio missing or blocked:", src);
+                });
             }
+
+            // 5. Update UI
+            if (btnElement) {
+                const playIcon = btnElement.querySelector('.icon-play');
+                const pauseIcon = btnElement.querySelector('.icon-pause');
+                if (playIcon && pauseIcon) {
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                }
+                btnElement.classList.add('playing');
+                
+                // Trigger waveform if it's the personality audio
+                if (src.includes('personality') && waveform) {
+                    waveform.classList.add('playing');
+                }
+            }
+        } catch (err) {
+            console.error("Audio System Error:", err);
         }
     }
 
@@ -112,108 +122,132 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emailBtn) {
         emailBtn.addEventListener('click', () => {
             playAudioTrack('assets/audio/contact.mp3', null);
-            
         });
     }
-// Attach Predictor Button (Hidden Contact Button)
-const predictorBtn = document.getElementById('predictor-btn');
-if (predictorBtn) {
-    predictorBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // Array of your 2 audios and 1 video
-        const outcomes = [
-            { type: 'audio', src: 'assets/audio/predictor1.mp3' },
-            { type: 'audio', src: 'assets/audio/predictor2.mp3' },
-            { type: 'video', src: 'assets/videos/predictor-video.mp4' }
-        ];
-        
-        // Pick a random outcome
-        const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-        
-        // Change button text temporarily
-        const originalText = predictorBtn.innerHTML;
-        predictorBtn.innerHTML = "✦ Processing... ✦";
-        
-        if (randomOutcome.type === 'audio') {
-            // Play Audio
-            playAudioTrack(randomOutcome.src, predictorBtn);
-            setTimeout(() => { predictorBtn.innerHTML = originalText; }, 4000);
-        } else {
-            // Play Fullscreen Video
-            if (!bgMusic.paused) { bgMusic.pause(); wasBgmPlayingBeforeAudio = true; }
-            globalAudio.pause();
-            if(currentAudioBtn) currentAudioBtn.classList.remove('playing');
-            if(waveform) waveform.classList.remove('playing');
-            
-            const videoOverlay = document.getElementById('video-overlay');
-            const fullscreenVideo = document.getElementById('fullscreen-video');
-            
-            videoOverlay.classList.remove('hidden');
-            fullscreenVideo.src = randomOutcome.src;
-            fullscreenVideo.controls = true;
-            fullscreenVideo.play().catch(err => console.warn("Predictor video missing", err));
-            
-            // Revert text after a short delay
-            setTimeout(() => { predictorBtn.innerHTML = originalText; }, 3000);
-        }
-    });
-}
+
     // Resume BGM when audio ends or pauses
-    globalAudio.addEventListener('pause', () => {
-        if (currentAudioBtn) {
-            const playIcon = currentAudioBtn.querySelector('.icon-play');
-            const pauseIcon = currentAudioBtn.querySelector('.icon-pause');
-            if (playIcon && pauseIcon) {
-                playIcon.classList.remove('hidden');
-                pauseIcon.classList.add('hidden');
+    if (globalAudio) {
+        globalAudio.addEventListener('pause', () => {
+            if (currentAudioBtn) {
+                const playIcon = currentAudioBtn.querySelector('.icon-play');
+                const pauseIcon = currentAudioBtn.querySelector('.icon-pause');
+                if (playIcon && pauseIcon) {
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                }
+                currentAudioBtn.classList.remove('playing');
             }
-            currentAudioBtn.classList.remove('playing');
-        }
-        if (waveform) waveform.classList.remove('playing');
-        
-        // Resume BGM
-        if (wasBgmPlayingBeforeAudio && bgMusic.paused) {
-            bgMusic.play();
-            wasBgmPlayingBeforeAudio = false;
-        }
-    });
+            if (waveform) waveform.classList.remove('playing');
+            
+            // Resume BGM
+            if (wasBgmPlayingBeforeAudio && bgMusic.paused) {
+                bgMusic.play().catch(e => {});
+                wasBgmPlayingBeforeAudio = false;
+            }
+        });
+    }
 
     // ==========================================
-    // 2. VIDEO OVERLAY (Strict Audio Cutoff)
+    // 2. HIDDEN PREDICTOR BUTTON LOGIC
+    // ==========================================
+    const predictorBtn = document.getElementById('predictor-btn');
+    if (predictorBtn) {
+        predictorBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const outcomes = [
+                { type: 'audio', src: 'assets/audio/predictor1.mp3' },
+                { type: 'audio', src: 'assets/audio/predictor2.mp3' },
+                { type: 'video', src: 'assets/videos/predictor-video.mp4' }
+            ];
+            
+            const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+            
+            const originalText = predictorBtn.innerHTML;
+            predictorBtn.innerHTML = "✦ Processing... ✦";
+            
+            if (randomOutcome.type === 'audio') {
+                playAudioTrack(randomOutcome.src, predictorBtn);
+                setTimeout(() => { predictorBtn.innerHTML = originalText; }, 4000);
+            } else {
+                playFullScreenVideo(randomOutcome.src, true);
+                setTimeout(() => { predictorBtn.innerHTML = originalText; }, 3000);
+            }
+        });
+    }
+
+    // ==========================================
+    // 3. ROBUST VIDEO SYSTEM (With Loader)
     // ==========================================
     const profileTrigger = document.getElementById('profile-trigger');
     const videoOverlay = document.getElementById('video-overlay');
     const fullscreenVideo = document.getElementById('fullscreen-video');
     const closeVideoBtn = document.getElementById('close-video-overlay');
+    const videoLoader = document.getElementById('video-loader');
+    const videoError = document.getElementById('video-error');
 
-    if (profileTrigger) {
-        profileTrigger.addEventListener('click', () => {
+    function playFullScreenVideo(src, showControls) {
+        try {
+            if (!videoOverlay || !fullscreenVideo) return;
+
             // 1. Stop ALL audio
             if (!bgMusic.paused) { bgMusic.pause(); wasBgmPlayingBeforeAudio = true; }
-            globalAudio.pause();
+            if(globalAudio) globalAudio.pause();
             if(currentAudioBtn) currentAudioBtn.classList.remove('playing');
             if(waveform) waveform.classList.remove('playing');
 
-            // 2. Play Video
+            // 2. Setup UI
             videoOverlay.classList.remove('hidden');
-            fullscreenVideo.src = 'assets/videos/video6.mp4';
-            fullscreenVideo.controls = true;
-            fullscreenVideo.play().catch(e => console.warn("Video 6 missing"));
+            videoError.classList.add('hidden');
+            fullscreenVideo.classList.add('hidden'); // Hide video until ready
+            videoLoader.classList.remove('hidden'); // Show loader
+
+            // 3. Load Video
+            fullscreenVideo.src = src;
+            fullscreenVideo.controls = showControls;
+            fullscreenVideo.load(); // Forces load of new source
+
+            // 4. Play
+            const playPromise = fullscreenVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Video is playing, hide loader
+                    videoLoader.classList.add('hidden');
+                    fullscreenVideo.classList.remove('hidden');
+                }).catch(error => {
+                    console.warn("Video missing or blocked:", error);
+                    videoLoader.classList.add('hidden');
+                    videoError.textContent = "Video failed to load. Imagine something cool here.";
+                    videoError.classList.remove('hidden');
+                });
+            }
+        } catch (err) {
+            console.error("Video Setup Error:", err);
+            if (videoLoader) videoLoader.classList.add('hidden');
+            if (videoError) {
+                videoError.textContent = "A critical error occurred.";
+                videoError.classList.remove('hidden');
+            }
+        }
+    }
+
+    if (profileTrigger) {
+        profileTrigger.addEventListener('click', () => {
+            playFullScreenVideo('assets/videos/video6.mp4', true);
         });
     }
 
-    // When video pauses or ends, resume BGM
+    // Resume BGM when video closes
     if (fullscreenVideo) {
         fullscreenVideo.addEventListener('pause', () => {
             if (wasBgmPlayingBeforeAudio && bgMusic.paused) {
-                bgMusic.play();
+                bgMusic.play().catch(e => {});
                 wasBgmPlayingBeforeAudio = false;
             }
         });
         fullscreenVideo.addEventListener('ended', () => {
             if (wasBgmPlayingBeforeAudio && bgMusic.paused) {
-                bgMusic.play();
+                bgMusic.play().catch(e => {});
                 wasBgmPlayingBeforeAudio = false;
             }
         });
@@ -222,17 +256,18 @@ if (predictorBtn) {
     if (closeVideoBtn) {
         closeVideoBtn.addEventListener('click', () => {
             videoOverlay.classList.add('hidden');
-            fullscreenVideo.pause(); // Triggers the pause event above
+            fullscreenVideo.pause(); 
+            fullscreenVideo.src = ""; // Clears memory
         });
     }
 
     // ==========================================
-    // 3. NAVIGATION, SCROLL REVEAL & SAKURA
+    // 4. NAVIGATION, SCROLL REVEAL & SAKURA
     // ==========================================
     const mobileMenu = document.getElementById('mobile-menu');
     const navLinks = document.querySelector('.nav-links');
 
-    if (mobileMenu) {
+    if (mobileMenu && navLinks) {
         mobileMenu.addEventListener('click', () => navLinks.classList.toggle('active'));
         document.querySelectorAll('.nav-links a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
     }
@@ -249,7 +284,7 @@ if (predictorBtn) {
 
     const sakuraContainer = document.getElementById('sakura-container');
     if (sakuraContainer && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const petalCount = window.innerWidth < 768 ? 15 : 30;
+        const petalCount = window.innerWidth < 768 ? 10 : 25; // Reduced for mobile performance
         for (let i = 0; i < petalCount; i++) {
             const petal = document.createElement('div');
             petal.classList.add('sakura-petal');
