@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
     
-    <!-- LINK TO CSS FILE -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,16 +16,17 @@
     <audio id="bg-music" src="assets/audio/background-music.mp3" loop></audio>
     <audio id="global-audio"></audio>
 
-    <!-- OVERLAYS -->
+    <!-- CINEMATIC BACKGROUND ELEMENTS -->
     <div class="bg-overlay"></div>
     <div id="sakura-container"></div>
 
     <!-- FULLSCREEN VIDEO OVERLAY -->
     <div id="video-overlay" class="fullscreen-video-overlay hidden">
         <button id="close-video-overlay" class="close-overlay-btn">&times;</button>
+        <!-- Loading Spinner -->
         <div id="video-loader" class="loader hidden"></div>
-        <div id="video-error" class="video-error-msg hidden">Failed to load video.</div>
-        <video id="fullscreen-video" class="fullscreen-video" playsinline preload="none"></video>
+        <div id="video-error" class="video-error-msg hidden">Video failed to load. Imagine it here.</div>
+        <video id="fullscreen-video" class="fullscreen-video hidden" playsinline preload="none"></video>
     </div>
 
     <!-- NAVIGATION -->
@@ -37,24 +37,27 @@
             <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
         </div>
         <ul class="nav-links">
-    <li><a href="#home" class="active">Home</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#personality">Personality</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="goodbye.html" class="exit-link">Exit</a></li>
-   <!-- TOP RIGHT GREETING BUTTON -->
-<li class="heart-nav-item">
-    <button class="audio-btn heart-style-btn" data-audio="assets/audio/greetings.mp3" title="Play Greeting">
-        <span class="heart-text">♥️</span>
-    </button>
-</li>
-</ul>
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#personality">Personality</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="goodbye.html" class="exit-link">Exit</a></li>
+            
+            <!-- TOP RIGHT HEART BUTTON -->
+            <li class="heart-nav-item">
+                <button class="audio-btn heart-style-btn" data-audio="assets/audio/greetings.mp3" title="Play Greeting">
+                    <span class="heart-text">♥️</span>
+                    <span class="pause-icon hidden">⏸</span>
+                </button>
+            </li>
+        </ul>
     </nav>
 
     <!-- HERO SECTION -->
     <section id="home" class="hero">
         <div class="hero-content">
             
+            <!-- PROFILE PHOTO TRIGGER (Mobile Responsive) -->
             <div class="hero-image-wrapper reveal" id="profile-trigger">
                 <div class="photo-frame">
                     <img src="assets/images/profile.jpg" alt="Srujan" class="hero-image" onerror="this.src='https://via.placeholder.com/400x500/1A1A1A/E8E0D5?text=Add+profile.jpg'">
@@ -155,10 +158,9 @@
                 <a href="mailto:hello@example.com" id="email-trigger" class="social-icon">Email</a>
             </div>
             
-            <!-- HIDDEN PREDICTOR BUTTON -->
             <div class="predictor-container">
                 <button id="predictor-btn" class="hidden-predictor-btn" title="Click to reveal your true opinion of me.">
-                                                 ✦ Sometime it predict your personality ✦
+                    ✦ Predict My Original Personality ✦
                 </button>
             </div>
         </div>
@@ -169,7 +171,6 @@
         <p>&copy; 2026 Srujan. All rights reserved to nobody.</p>
     </footer>
 
-    <!-- LINK TO JAVASCRIPT FILE -->
     <script src="script.js"></script>
 </body>
 </html>
