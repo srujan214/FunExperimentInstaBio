@@ -112,9 +112,53 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emailBtn) {
         emailBtn.addEventListener('click', () => {
             playAudioTrack('assets/audio/contact.mp3', null);
+            
         });
     }
-
+// Attach Predictor Button (Hidden Contact Button)
+const predictorBtn = document.getElementById('predictor-btn');
+if (predictorBtn) {
+    predictorBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Array of your 2 audios and 1 video
+        const outcomes = [
+            { type: 'audio', src: 'assets/audio/predictor1.mp3' },
+            { type: 'audio', src: 'assets/audio/predictor2.mp3' },
+            { type: 'video', src: 'assets/videos/predictor-video.mp4' }
+        ];
+        
+        // Pick a random outcome
+        const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+        
+        // Change button text temporarily
+        const originalText = predictorBtn.innerHTML;
+        predictorBtn.innerHTML = "✦ Processing... ✦";
+        
+        if (randomOutcome.type === 'audio') {
+            // Play Audio
+            playAudioTrack(randomOutcome.src, predictorBtn);
+            setTimeout(() => { predictorBtn.innerHTML = originalText; }, 4000);
+        } else {
+            // Play Fullscreen Video
+            if (!bgMusic.paused) { bgMusic.pause(); wasBgmPlayingBeforeAudio = true; }
+            globalAudio.pause();
+            if(currentAudioBtn) currentAudioBtn.classList.remove('playing');
+            if(waveform) waveform.classList.remove('playing');
+            
+            const videoOverlay = document.getElementById('video-overlay');
+            const fullscreenVideo = document.getElementById('fullscreen-video');
+            
+            videoOverlay.classList.remove('hidden');
+            fullscreenVideo.src = randomOutcome.src;
+            fullscreenVideo.controls = true;
+            fullscreenVideo.play().catch(err => console.warn("Predictor video missing", err));
+            
+            // Revert text after a short delay
+            setTimeout(() => { predictorBtn.innerHTML = originalText; }, 3000);
+        }
+    });
+}
     // Resume BGM when audio ends or pauses
     globalAudio.addEventListener('pause', () => {
         if (currentAudioBtn) {

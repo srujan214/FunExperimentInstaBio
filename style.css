@@ -219,3 +219,36 @@ nav {
 .fullscreen-video-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; }
 .fullscreen-video { width: 100%; height: 100%; object-fit: contain; }
 .close-overlay-btn { position: absolute; top: 20px; right: 30px; font-size: 3rem; background: transparent; border: none; color: var(--accent-red); cursor: pointer; z-index: 10000; }
+/* =========================================
+   HIDDEN PREDICTOR BUTTON
+   ========================================= */
+.predictor-container {
+    margin-top: 3rem;
+    opacity: 0.3; /* Subtle by default */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.predictor-container:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.hidden-predictor-btn {
+    background: transparent;
+    border: 1px dashed var(--accent-red);
+    color: var(--text-secondary);
+    font-family: monospace;
+    font-size: 0.8rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 2px;
+}
+
+.hidden-predictor-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-gold);
+    background: rgba(166, 43, 43, 0.1);
+    box-shadow: 0 0 15px rgba(166, 43, 43, 0.3);
+}
