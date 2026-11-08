@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Srujan | A Beautiful Mistake</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- BACKGROUND MUSIC (AUDIO 1) -->
+    <audio id="bg-music" src="assets/audio/audio1.mp3" loop></audio>
+
+    <nav id="navbar">
+        <div class="logo">夢 Srujan</div>
+        
+        <!-- BACKGROUND MUSIC TOGGLE BUTTON -->
+        <button id="bgm-toggle" class="bgm-btn" title="Toggle Background Music">🔊</button>
+
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#talent" id="talent-btn">Talent</a></li>
+            <li><a href="#memories">Memories</a></li>
+            <li><a href="#personality">Personality</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#" id="exit-btn" class="exit-link">Exit</a></li>
+        </ul>
+    </nav>
+
+    <div id="sakura-container"></div>
+
+    <!-- GENERIC FULL SCREEN VIDEO OVERLAY -->
+    <div id="video-overlay" class="fullscreen-video-overlay hidden">
+        <button id="close-video-overlay" class="close-overlay-btn">&times;</button>
+        <video id="fullscreen-video" class="fullscreen-video" playsinline controls></video>
+        <div id="video-error-msg" class="overlay-error hidden">Oops! The video failed to load.</div>
+        <div id="video-hint" class="overlay-text"></div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-image-container reveal">
+                <img src="assets/images/profile.jpg" id="profile-photo" alt="Srujan" class="hero-image" title="Click me for a surprise" onerror="this.src='https://via.placeholder.com/400x500/1A1A1A/E8E0D5?text=Add+profile.jpg'">
+            </div>
+            <div class="hero-text reveal">
+                <h2 class="welcome-text">Welcome to my unfortunate existence.</h2>
+                <h1 class="main-name">Srujan A Naik</h1>
+                <p class="subtitle">Professional disappointment. Part-time human. Full-time confusion.</p>
+                
+                <div class="poem-box">
+                    <p class="poem">"Toota hua saaz hoon main, khud se hi naraz hoon main.<br>
+                    Seene mein jo kahin pe dabi hai, aisi koi aawaz hoon main."</p>
+                    <button class="audio-btn" data-audio="assets/audio/audio2.mp3">
+                        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- UPDATED ABOUT SECTION -->
+    <section id="about" class="section dark-bg">
+        <div class="container">
+            <h2 class="section-title reveal">About Me — A Beautiful Mistake</h2>
+            
+            <div class="about-header reveal">
+                <div class="poem-box center-poem">
+                    <p class="poem">"Sacchayi chhupayi gayi, afwah udayi gayi.<br>
+                    Baat kuch aur thi, batayi kuch aur gayi."</p>
+                    <button class="audio-btn" data-audio="assets/audio/audio3.mp3">
+                        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- NEW ANIME GRID -->
+            <div class="anime-section reveal">
+                <h3 class="anime-heading">Stories that stayed with me.</h3>
+                <div class="anime-grid">
+                    <!-- Attack on Titan -->
+                    <div class="anime-card">
+                        <div class="anime-img-wrapper">
+                            <img src="assets/images/anime-aot.jpg" alt="Attack on Titan" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Attack+on+Titan'">
+                        </div>
+                        <div class="anime-info">
+                            <h4>Attack on Titan</h4>
+                            <p>Freedom has a price.</p>
+                        </div>
+                    </div>
+                    <!-- Death Note -->
+                    <div class="anime-card">
+                        <div class="anime-img-wrapper">
+                            <img src="assets/images/anime-deathnote.jpg" alt="Death Note" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Death+Note'">
+                        </div>
+                        <div class="anime-info">
+                            <h4>Death Note</h4>
+                            <p>A battle of minds.</p>
+                        </div>
+                    </div>
+                    <!-- Vinland Saga -->
+                    <div class="anime-card">
+                        <div class="anime-img-wrapper">
+                            <img src="assets/images/anime-vinland.jpg" alt="Vinland Saga" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Vinland+Saga'">
+                        </div>
+                        <div class="anime-info">
+                            <h4>Vinland Saga</h4>
+                            <p>A different kind of strength.</p>
+                        </div>
+                    </div>
+                    <!-- Your Name -->
+                    <div class="anime-card">
+                        <div class="anime-img-wrapper">
+                            <img src="assets/images/anime-yourname.jpg" alt="Your Name" onerror="this.src='https://via.placeholder.com/300x400/1A1A1A/A62B2B?text=Your+Name'">
+                        </div>
+                        <div class="anime-info">
+                            <h4>Your Name</h4>
+                            <p>Some connections remain.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TALENT SECTION -->
+    <section id="talent" class="section">
+        <div class="container">
+            <h2 class="section-title reveal">My Extraordinary Talents</h2>
+            <div class="grid-3">
+                <div class="card reveal"><h3>Overthinking</h3><p>International-level performance. I can ruin a perfectly good day in 3 seconds.</p></div>
+                <div class="card reveal"><h3>Disappearing</h3><p>Available only when nobody needs me. I am the Batman of uselessness.</p></div>
+                <div class="card reveal"><h3>Sleeping</h3><p>An undiscovered Olympic discipline. Give me the gold medal and a blanket.</p></div>
+                <div class="card reveal"><h3>Excuse Engineering</h3><p>Advanced-level specialization. My dog ate my code, I swear.</p></div>
+                <div class="card reveal"><h3>Procrastination</h3><p>Deadlines are my biggest enemies. I fight them by sleeping until the last minute.</p></div>
+                <div class="card reveal"><h3>Sarcasm</h3><p>My only verified skill. I speak it fluently.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEMORIES SECTION -->
+    <section id="memories" class="section dark-bg">
+        <div class="container">
+            <h2 class="section-title reveal">Historical Incidents</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item reveal">
+                    <img src="assets/images/video1-poster.jpg" alt="Memory 1" onerror="this.src='https://via.placeholder.com/400x300/1A1A1A/E8E0D5?text=Memory+1'">
+                    <p>The day I decided to become productive.</p>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="assets/images/video2-poster.jpg" alt="Memory 2" onerror="this.src='https://via.placeholder.com/400x300/1A1A1A/E8E0D5?text=Memory+2'">
+                    <p>The legendary incident of doing absolutely nothing.</p>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="assets/images/video3-poster.jpg" alt="Memory 3" onerror="this.src='https://via.placeholder.com/400x300/1A1A1A/E8E0D5?text=Memory+3'">
+                    <p>A historic failure disguised as character development.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PERSONALITY SECTION -->
+    <section id="personality" class="section">
+        <div class="container text-center">
+            <h2 class="section-title reveal">Discover Your Opinion About Me</h2>
+            <div class="personality-card reveal">
+                <p id="personality-status" class="poem">Congratulations. You have officially wasted your curiosity.</p>
+                <button id="reveal-personality-btn" class="vintage-btn mt-2">Reveal My Personality</button>
+                <div id="custom-audio-player" class="audio-player hidden">
+                    <button class="audio-btn" data-audio="assets/audio/audio5.mp3" id="personality-audio-btn">
+                        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                    <span class="audio-text">Listen to my highly questionable personality.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+        <div class="container text-center reveal">
+            <h2 class="section-title">Contact the Disaster</h2>
+            <p class="subtitle">Want to communicate with this questionable life form? Proceed at your own risk.</p>
+            <div class="social-links">
+                <a href="mailto:hello@example.com" class="social-icon">Email</a>
+            </div>
+        </div>
+    </section>
+
+    <footer><p>&copy; 2024 Srujan. All rights reserved to nobody.</p></footer>
+
+    <audio id="global-audio"></audio>
+    <script src="script.js"></script>
+</body>
+</html>
